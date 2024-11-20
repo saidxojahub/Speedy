@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Tezligini O'lchash</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f4f4f9;
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-size: 2.5rem;
+        }
+
+        #start-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #start-btn:hover {
+            background-color: #45a049;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 50px auto;
+            background: conic-gradient(#1e1e2f 0%, #1e1e2f 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #f4f4f9;
+            font-weight: bold;
+        }
+
+        .result {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            color: #4CAF50;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .circle-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .circle-text {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Internet Tezligini O'lchash</h1>
+    <div class="circle-container">
+        <div class="circle-text" id="circle-text">0 Mbps</div>
+    </div>
+    <button id="start-btn">Tezlikni o'lchashni boshlash</button>
+    <div id="result" class="result">Natijani kuting...</div>
+
+    <script>
+        document.getElementById("start-btn").addEventListener("click", function() {
+            const resultDiv = document.getElementById("result");
+            const circleText = document.getElementById("circle-text");
+            const circleContainer = document.querySelector(".circle-container");
+
+            resultDiv.textContent = "Tezlikni o'lchash davom etmoqda...";
+            circleContainer.style.background = "conic-gradient(#4CAF50 0%, #1e1e2f 0%)";
+
+            const imageAddr = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+            const downloadSize = 50000; // Taxminiy hajm (bayt)
+            let startTime, endTime, totalSpeed = 0, count = 0;
+
+            function measureSpeed() {
+                const downloadImg = new Image();
+                downloadImg.onload = function() {
+                    endTime = (new Date()).getTime();
+                    const duration = (endTime - startTime) / 1000; // soniyalarda
+                    const speedBps = (downloadSize * 8) / duration; // bit/soniya
+                    const speedMbps = (speedBps / 1024 / 1024).toFixed(2); // megabit/soniya
+
+                    totalSpeed += parseFloat(speedMbps);
+                    count++;
+                    const avgSpeed = (totalSpeed / count).toFixed(2);
+
+                    // Tezlikka mos indikatorni yangilash
+                    const maxSpeed = 40; // Maksimal tezlik (40 Mbps)
+                    let progress;
+
+                    // Progressni hisoblash
+                    if (avgSpeed >= 40) {
+                        progress = 100;
+                    } else if (avgSpeed >= 20) {
+                        progress = 50;
+                    } else if (avgSpeed >= 5) {
+                        progress = 20;
+                    } else {
+                        progress = 5; // Agar tezlik juda past bo‘lsa
+                    }
+
+                    circleContainer.style.background = `conic-gradient(#4CAF50 0%, #4CAF50 ${progress}%, #1e1e2f ${progress}%)`;
+                    circleText.textContent = `${avgSpeed} Mbps`;
+                };
+                downloadImg.onerror = function() {
+                    resultDiv.textContent = "Internet tezligini o'lchab bo'lmadi.";
+                };
+                startTime = (new Date()).getTime();
+                downloadImg.src = imageAddr + "?t=" + startTime;
+            }
+
+            let interval = setInterval(function() {
+                if (count < 10) {
+                    measureSpeed();
+                } else {
+                    clearInterval(interval);
+                    const avgSpeed = (totalSpeed / count).toFixed(2);
+                    resultDiv.textContent = `Yakuniy internet tezligi: ${avgSpeed} Mbps`;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

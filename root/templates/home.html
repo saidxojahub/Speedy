@@ -110,11 +110,11 @@
                     const avgSpeed = (totalSpeed / count).toFixed(2);
 
                     // Tezlikka mos indikatorni yangilash
-                    const maxSpeed = 40; // Maksimal tezlik (40 Mbps)
+                    const maxSpeed = 30; // Maksimal tezlik (40 Mbps)
                     let progress;
 
                     // Progressni hisoblash
-                    if (avgSpeed >= 40) {
+                    if (avgSpeed >= 30) {
                         progress = 100;
                     } else if (avgSpeed >= 20) {
                         progress = 50;
@@ -140,7 +140,7 @@
                 } else {
                     clearInterval(interval);
                     const avgSpeed = (totalSpeed / count).toFixed(2);
-                    resultDiv.textContent = `Yakuniy internet tezligi: ${avgSpeed} Mbps`;
+                    resultDiv.textContent = `Sizning internet tezligingiz: ${avgSpeed} Mbps`;
                 }
             }, 1000);
         });
